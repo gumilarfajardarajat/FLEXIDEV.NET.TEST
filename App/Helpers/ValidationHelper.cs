@@ -4,12 +4,20 @@ namespace App.Helpers
 {
     public static class ValidationHelper
     {
-        public static void CheckCalculateRequest(CalculateRequest calculateRequest)
+        public static bool IsCalculateRequestValid(CalculateRequest calculateRequest)
         {
-            if (calculateRequest.YearOfDath < calculateRequest.AgeOfDeath)
+            if (calculateRequest.YearOfDeath > calculateRequest.AgeOfDeath)
             {
-                throw new ArgumentException("-1");
+                return true;
             }
+            return false;
+        }
+
+        public static bool IsCalculateRequestsValid(List<CalculateRequest> calculateRequests)
+        {
+            var res = calculateRequests.All(v => IsCalculateRequestValid(v));
+            return res;
+
         }
     }
 }

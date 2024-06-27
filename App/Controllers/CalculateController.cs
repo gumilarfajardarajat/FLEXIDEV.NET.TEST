@@ -1,25 +1,45 @@
 ﻿using App.DTO;
 using App.Helpers;
+using App.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace App.Controllers
 {
     public class CalculateController:ControllerBase
     {
+        private ICalculateService _calculateService;
+
+        public CalculateController(ICalculateService calculateService)
+        {
+            _calculateService = calculateService;
+        }
+
         [HttpPost]
-        public IActionResult Index(CalculateRequest calculateRequest)
+        [Route("Calculate")]
+        public IActionResult Index([FromBody] List<CalculateRequest> calculate)
         {
             try
             {
-                ValidationHelper.CheckCalculateRequest(calculateRequest);
-                var result = CalculateHelper.GetKilledVillagersByAgeYear(calculateRequest.AgeOfDeath,calculateRequest.YearOfDath);
+                var result = _calculateService.CalculateAll(calculate);
                 return Ok(result);
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            
-            
+        }
+
+        [HttpPost]
+        [Route("GetAverage")]
+        public IActionResult GetAverage([FromBody] List<CalculateRequest> calculate)
+        {
+            try
+            {
+                return Ok(calculate);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

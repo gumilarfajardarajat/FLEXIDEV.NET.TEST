@@ -40,9 +40,9 @@
             return result;
         }
 
-        public static int GetKilledVillagersByAgeYear(int ageOfDeath, int yearOfDath)
+        public static int GetKilledVillagersByAgeYear(int ageOfDeath, int yearOfDeath)
         {
-            var difference = yearOfDath - ageOfDeath;
+            var difference = yearOfDeath - ageOfDeath;
             return GetKilledVillagers(difference);
         }
 
