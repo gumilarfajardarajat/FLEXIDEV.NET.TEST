@@ -3,10 +3,143 @@
 }
 
 <div class="text-center">
-    <form class="form-inline">
-        <div class="form-group d-flex">
-            <label class="flex-nowrap">Person A</label>
-            <input type="number" class="form-control flex-nowrap" />
+    <div class="mb-5">
+        <img src="~/img/witch.png" class="img-fluid" style="width:200px" />
+    </div>
+    <form id="formCalculate">
+        <div id="cardInputContainer">
+        </div>
+        <div id="cardResult">
+        </div>
+        <div>
+            <button class="btn btn-light border px-5" id="btnReset" type="reset">Reset</button>
+            <button class="btn btn-success px-5" id="btnSubmit">Submit</button>
         </div>
     </form>
 </div>
+
+@section Scripts
+{
+    <script>
+        function getAlphabet(number) {
+            let alphabet = String.fromCharCode(64+number)
+            return alphabet;
+        }
+
+        function getInputItemEl(label) {
+            var cardInputItemEl = `
+                <div class="card mb-5 card-input-item">
+                    <div class="card-header text-center">
+                        <h5>Person ${label}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-6">
+                                <label class="flex-nowrap">Age Of Death</label>
+                                <input type="number" name="age" class="form-control flex-nowrap" required />
+                            </div>
+                            <div class="form-group col-6">
+                                <label class="flex-nowrap">Year Of Death</label>
+                                <input type="number" name="year" class="form-control flex-nowrap" required />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            return cardInputItemEl;
+        }
+
+        function createInputItem(number) {
+            let alphabet = getAlphabet(number);
+            return getInputItemEl(alphabet);
+        }
+
+        function createInitialCardInput() {
+            $('#cardInputContainer').append(createInputItem(1));
+            $('#cardInputContainer').append(createInputItem(2));
+        }
+
+        function createCardResultEl(label,content) {
+            var cardResultEl = `
+                <div class="card mb-5">
+                    <div class="card-header text-center">
+                        <h5>${label}</h5>
+                    </div>
+                    <div class="card-body">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            return cardResultEl;
+        }
+
+        $('#formCalculate').on('submit', function (e) { 
+            e.preventDefault();
+            
+            
+
+            var data = $('.card-input-item').map(function () {
+                var ageOfDeath = $('[name="age"]').val();
+                var yearOfDeath = $('[name="age"]').val();
+                return { AgeOfDeath: ageOfDeath, YearOfDeath: yearOfDeath }
+            }).get();
+
+            // var data = [
+            //     {
+            //         "AgeOfDeath": "-1",
+            //         "YearOfDeath": "12"
+            //     },
+            //     {
+            //         "AgeOfDeath": "13",
+            //         "YearOfDeath": "17"
+            //     }
+
+            // ];
+
+            
+
+            $.ajax({
+                type: 'POST',
+                url: '/Calculate',  // Replace with your server URL
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (response) {
+                    console.log('Success:', response);
+                    var details = response.details;
+
+                    var content = details.map(e => {
+                        return `<p>Person A born on Year = <b>${e.difference} </b>, number of people killed on year ${e.difference} is <b>${e.killed}</b ></p>`;
+                    }).join('');
+
+                    content += `<h5>Average</h5><h1>${response.average}</h1>`;
+
+                    var label = "Success";
+
+                    $('#btnSubmit').attr('disabled', true);
+                    $('#cardResult').html(createCardResultEl(label, content));
+                },
+                error: function (xhr, status, error) {
+
+                    var content = `<h5>Result</h5><h1>${error}</h1>`;
+                    var label = "Failed";
+
+                    $('#btnSubmit').attr('disabled', true);
+                    $('#cardResult').html(createCardResultEl(label, content));
+                }
+            });
+
+        })
+
+        $('#btnReset').on('click', function () {
+            $('#cardInputContainer').empty();
+            createInitialCardInput();
+            $('#btnSubmit').attr('disabled', false);
+        });
+
+        createInitialCardInput();
+        $('input').val('12');
+        
+
+    </script>
+}
