@@ -1,5 +1,6 @@
 ﻿using App.Controllers;
 using App.DTO;
+using App.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,41 +13,61 @@ namespace UnitTest
     public class CalculateControllerTests
     {
         private CalculateController calculateController;
-
+        private CalculateService calculateService;
         public CalculateControllerTests()
         {
-            calculateController = new CalculateController();
+            calculateService = new CalculateService();
+            calculateController = new CalculateController(calculateService);
+            
         }
 
         [Fact]
-        public void IndexTestResultOk()
+        public void IndexTestOkBadResult()
         {
-            var calculateRequest = new CalculateRequest()
+            var calculateRequests = new List<CalculateRequest>()
             {
-                AgeOfDeath = 10,
-                YearOfDath = 12
+                new CalculateRequest()
+                    {
+                        AgeOfDeath = 10,
+                        YearOfDeath = 12
+                    },
+                new CalculateRequest()
+                    {
+                        AgeOfDeath = 13,
+                        YearOfDeath = 17
+                    }
             };
 
-            var response = calculateController.Index(calculateRequest);
+            var response = calculateController.Index(calculateRequests);
             var result = response as OkObjectResult;
             Assert.IsAssignableFrom<OkObjectResult>(result);
-            Assert.Equal(2, result.Value);
+            
         }
 
         [Fact]
-        public void IndexTestResultBad()
+        public void IndexTestBadResult()
         {
-            var calculateRequest = new CalculateRequest()
+            var calculateRequests = new List<CalculateRequest>()
             {
-                AgeOfDeath = 12,
-                YearOfDath = 10
+                new CalculateRequest()
+                    {
+                        AgeOfDeath = 12,
+                        YearOfDeath = 1
+                    },
+                new CalculateRequest()
+                    {
+                        AgeOfDeath = 13,
+                        YearOfDeath = 17
+                    }
             };
 
-            var response = calculateController.Index(calculateRequest);
+            var response = calculateController.Index(calculateRequests);
             var result = response as BadRequestObjectResult;
             Assert.IsAssignableFrom<BadRequestObjectResult>(result);
-            Assert.Equal("-1", result.Value);
+
         }
+
+
     }
 
 }

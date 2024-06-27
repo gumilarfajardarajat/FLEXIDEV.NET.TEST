@@ -59,5 +59,19 @@ namespace UnitTest
             Assert.Equal(4.5, average); // Expected average is 3.0
 
         }
+
+        [Fact]
+        public void Main()
+        {
+            // Arrange
+            List<int> values = new List<int>();
+            values.Add(1);
+            values.Add(2);
+
+            var res = values.All(v => v > 0);
+            Assert.True(res);
+
+
+        }
     }
 }
