@@ -36,11 +36,11 @@
                         <div class="row">
                             <div class="form-group col-6">
                                 <label class="flex-nowrap">Age Of Death</label>
-                                <input type="number" name="age" class="form-control flex-nowrap" required />
+                                <input type="number" name="ageOfDeath" class="form-control flex-nowrap" required />
                             </div>
                             <div class="form-group col-6">
                                 <label class="flex-nowrap">Year Of Death</label>
-                                <input type="number" name="year" class="form-control flex-nowrap" required />
+                                <input type="number" name="yearOfDeath" class="form-control flex-nowrap" required />
                             </div>
                         </div>
                     </div>
@@ -80,51 +80,40 @@
             
 
             var data = $('.card-input-item').map(function () {
-                var ageOfDeath = $('[name="age"]').val();
-                var yearOfDeath = $('[name="age"]').val();
+                var ageOfDeath = $(this).find('[name="ageOfDeath"]').val();
+                var yearOfDeath = $(this).find('[name="yearOfDeath"]').val();
                 return { AgeOfDeath: ageOfDeath, YearOfDeath: yearOfDeath }
             }).get();
 
-            // var data = [
-            //     {
-            //         "AgeOfDeath": "-1",
-            //         "YearOfDeath": "12"
-            //     },
-            //     {
-            //         "AgeOfDeath": "13",
-            //         "YearOfDeath": "17"
-            //     }
-
-            // ];
-
-            
-
             $.ajax({
                 type: 'POST',
-                url: '/Calculate',  // Replace with your server URL
+                url: '/Calculate',
                 data: JSON.stringify(data),
                 contentType: 'application/json',
                 success: function (response) {
                     console.log('Success:', response);
                     var details = response.details;
 
-                    var content = details.map(e => {
-                        return `<p>Person A born on Year = <b>${e.difference} </b>, number of people killed on year ${e.difference} is <b>${e.killed}</b ></p>`;
+                    var content = details.map((e, index) => {
+                        var label = getAlphabet(index+1);
+                        return `<p>Person ${label} born on Year = <b>${e.difference} </b>, number of people killed on year ${e.difference} is <b>${e.killed}</b ></p>`;
                     }).join('');
 
                     content += `<h5>Average</h5><h1>${response.average}</h1>`;
 
                     var label = "Success";
 
-                    $('#btnSubmit').attr('disabled', true);
+                    // $('#btnSubmit').attr('disabled', true);
                     $('#cardResult').html(createCardResultEl(label, content));
+                    // $('input').attr('readonly', true);
                 },
                 error: function (xhr, status, error) {
-
-                    var content = `<h5>Result</h5><h1>${error}</h1>`;
+                    console.log('we found an error');
+                    console.log(xhr.responseText);
+                    var content = `<h1>${xhr.responseText}</h1><h5>Data is invalid</h5>`;
                     var label = "Failed";
 
-                    $('#btnSubmit').attr('disabled', true);
+                    // $('#btnSubmit').attr('disabled', true);
                     $('#cardResult').html(createCardResultEl(label, content));
                 }
             });
@@ -134,11 +123,18 @@
         $('#btnReset').on('click', function () {
             $('#cardInputContainer').empty();
             createInitialCardInput();
-            $('#btnSubmit').attr('disabled', false);
+            // $('#btnSubmit').attr('disabled', false);
+            // $('input').attr('readonly', false);
+            $('#cardResult').empty();
         });
 
         createInitialCardInput();
-        $('input').val('12');
+
+        $('[name="ageOfDeath"]:eq(0)').val('10');
+        $('[name="yearOfDeath"]:eq(0)').val('-12');
+
+        $('[name="ageOfDeath"]:eq(1)').val('13');
+        $('[name="yearOfDeath"]:eq(1)').val('17');
         
 
     </script>

@@ -6,7 +6,7 @@ namespace App.Helpers
     {
         public static bool IsCalculateRequestValid(CalculateRequest calculateRequest)
         {
-            if (calculateRequest.YearOfDeath > calculateRequest.AgeOfDeath)
+            if ((calculateRequest.YearOfDeath > calculateRequest.AgeOfDeath) && (calculateRequest.YearOfDeath) > 0 && (calculateRequest.AgeOfDeath) > 0)
             {
                 return true;
             }
