@@ -6,6 +6,9 @@
     <div class="mb-5">
         <img src="~/img/witch.png" class="img-fluid" style="width:200px" />
     </div>
+    <div class="mb-3">
+        <button class="btn btn-primary px-5" id="btnAdd">Add Person</button>
+    </div>
     <form id="formCalculate">
         <div id="cardInputContainer">
         </div>
@@ -103,9 +106,7 @@
 
                     var label = "Success";
 
-                    // $('#btnSubmit').attr('disabled', true);
                     $('#cardResult').html(createCardResultEl(label, content));
-                    // $('input').attr('readonly', true);
                 },
                 error: function (xhr, status, error) {
                     console.log('we found an error');
@@ -113,7 +114,6 @@
                     var content = `<h1>${xhr.responseText}</h1><h5>Data is invalid</h5>`;
                     var label = "Failed";
 
-                    // $('#btnSubmit').attr('disabled', true);
                     $('#cardResult').html(createCardResultEl(label, content));
                 }
             });
@@ -123,12 +123,15 @@
         $('#btnReset').on('click', function () {
             $('#cardInputContainer').empty();
             createInitialCardInput();
-            // $('#btnSubmit').attr('disabled', false);
-            // $('input').attr('readonly', false);
             $('#cardResult').empty();
         });
 
         createInitialCardInput();
+
+        $('#btnAdd').on('click', function () {
+            var length = $('.card-input-item').length;
+            $('#cardInputContainer').append(createInputItem(length+1));
+        });
 
         // $('[name="ageOfDeath"]:eq(0)').val('10');
         // $('[name="yearOfDeath"]:eq(0)').val('-12');
